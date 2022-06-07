@@ -1,0 +1,18 @@
+debug: true
+
+metrics:
+  host: localhost
+  port: 9101
+  path: /metrics
+
+jaeger:
+  service: "comments"
+  host: "localhost"
+  port: "6831"
+
+kafka:
+  producerTopic: "moderation_comments"
+  consumerTopic: "comments"
+  groupId: "moderation"
+  brokers:
+    - "localhost:9094"
