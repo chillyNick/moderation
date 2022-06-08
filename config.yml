@@ -6,7 +6,7 @@ metrics:
   path: /metrics
 
 jaeger:
-  service: "comments"
+  service: "moderation"
   host: "localhost"
   port: "6831"
 

@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/homework3/moderation/internal/config"
+	"github.com/homework3/moderation/internal/tracer"
 	"github.com/homework3/moderation/pkg/model"
+	"github.com/opentracing/opentracing-go"
 	"github.com/rs/zerolog/log"
 )
 
@@ -39,14 +41,23 @@ func (k *kafka) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.C
 			Str("value", string(msg.Value)).
 			Msgf("Message topic:%q partition:%d offset:%d", msg.Topic, msg.Partition, msg.Offset)
 
-		comment := model.Comment{}
+		spanCtx, err := tracer.ExtractSpanContext(msg.Headers)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to extract spanContext from kafka headers")
+		}
+		span := opentracing.StartSpan("Comment moderation", opentracing.ChildOf(spanCtx))
 
-		err := json.Unmarshal(msg.Value, &comment)
+		comment := model.Comment{}
+		err = json.Unmarshal(msg.Value, &comment)
 		if err != nil {
 			log.Error().Err(err).Str("value", string(msg.Value)).Msg("Failed to unmarshal comment")
+			span.Finish()
+
+			continue
 		}
 
 		err = k.processComment(comment)
+		span.Finish()
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to process message")
 
@@ -60,7 +71,7 @@ func (k *kafka) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.C
 }
 
 func (k *kafka) processComment(comment model.Comment) error {
-	mComment := moderateComment(comment)
+	mComment := ModerateComment(comment)
 
 	val, err := json.Marshal(mComment)
 	if err != nil {
@@ -130,6 +141,7 @@ func createProducer(brokerList []string) (sarama.SyncProducer, error) {
 	saramaCfg := sarama.NewConfig()
 	saramaCfg.Producer.RequiredAcks = sarama.WaitForAll
 	saramaCfg.Producer.Retry.Max = 10
+	saramaCfg.Producer.Return.Successes = true
 
 	return sarama.NewSyncProducer(brokerList, saramaCfg)
 }

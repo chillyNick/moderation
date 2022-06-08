@@ -3,24 +3,25 @@ package app
 import (
 	"github.com/homework3/moderation/pkg/model"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"math/rand"
 )
 
-var moderationFailed = prometheus.NewCounter(
+var moderationFailed = promauto.NewCounter(
 	prometheus.CounterOpts{
 		Name: "moderation_comment_failed",
 		Help: "A number of comments which failed to pass moderation",
 	},
 )
 
-var moderationSuccess = prometheus.NewCounter(
+var moderationSuccess = promauto.NewCounter(
 	prometheus.CounterOpts{
 		Name: "moderation_comment_success",
 		Help: "A number of comments which passed moderation",
 	},
 )
 
-func moderateComment(comment model.Comment) *model.ModerationComment {
+func ModerateComment(comment model.Comment) *model.ModerationComment {
 	mComment := &model.ModerationComment{
 		CommentId: comment.Id,
 		UserId:    comment.UserId,
