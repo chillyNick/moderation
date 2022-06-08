@@ -39,6 +39,19 @@ func NewTracer(cfg *config.Config) (io.Closer, error) {
 
 var headerKey = []byte("trace")
 
+func InjectSpanContext(ctx opentracing.SpanContext, headers *[]sarama.RecordHeader) error {
+	buf := &bytes.Buffer{}
+	if err := opentracing.GlobalTracer().Inject(ctx, opentracing.Binary, buf); err != nil {
+		log.Error().Err(err).Msg("Failed to inject span context into kafka header")
+
+		return err
+	}
+
+	*headers = append(*headers, sarama.RecordHeader{Key: headerKey, Value: buf.Bytes()})
+
+	return nil
+}
+
 func ExtractSpanContext(headers []*sarama.RecordHeader) (opentracing.SpanContext, error) {
 	var traceHeader []byte
 	for _, v := range headers {

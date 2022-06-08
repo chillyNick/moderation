@@ -1,4 +1,4 @@
-package app
+package moderation
 
 import (
 	"github.com/homework3/moderation/pkg/model"

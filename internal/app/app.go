@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/homework3/moderation/internal/config"
+	"github.com/homework3/moderation/internal/kafka"
 	"github.com/homework3/moderation/internal/metrics"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -37,7 +38,7 @@ func (a *App) Start(cfg *config.Config) error {
 	}()
 
 	go func() {
-		if err := observeMbMessages(ctx, &cfg.Kafka); err != nil {
+		if err := kafka.StartObserveMessages(ctx, &cfg.Kafka); err != nil {
 			log.Error().Err(err).Msg("Failed to start kafka client")
 			cancel()
 		}
