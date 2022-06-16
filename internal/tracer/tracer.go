@@ -3,11 +3,12 @@ package tracer
 import (
 	"bytes"
 	"fmt"
+	"io"
+
 	"github.com/Shopify/sarama"
 	"github.com/homework3/moderation/internal/config"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
-	"io"
 
 	"github.com/rs/zerolog/log"
 	jaegercfg "github.com/uber/jaeger-client-go/config"

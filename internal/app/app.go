@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/homework3/moderation/internal/config"
-	"github.com/homework3/moderation/internal/kafka"
-	"github.com/homework3/moderation/internal/metrics"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/homework3/moderation/internal/config"
+	"github.com/homework3/moderation/internal/kafka"
+	"github.com/homework3/moderation/internal/metrics"
+	"github.com/rs/zerolog/log"
 )
 
 type App struct {

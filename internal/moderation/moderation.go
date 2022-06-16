@@ -1,10 +1,11 @@
 package moderation
 
 import (
+	"math/rand"
+
 	"github.com/homework3/moderation/pkg/model"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"math/rand"
 )
 
 var moderationFailed = promauto.NewCounter(

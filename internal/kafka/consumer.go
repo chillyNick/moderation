@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/Shopify/sarama"
 	"github.com/homework3/moderation/internal/config"
 	"github.com/homework3/moderation/internal/moderation"
